@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>God, who is that; god?</title>
+  <link id="favicon" rel="icon" type="image/png" href="">
+
+  <script>
+    let illusionDigit = Math.floor(Math.random() * 10);
+    let offset = -300;   // start off-screen on left
+    let digitLocked = false;
+
+    function updateTabUI() {
+      const canvas = document.createElement("canvas");
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext("2d");
+
+      const now = new Date();
+      const timeText = now.toLocaleTimeString("en-GB", { hour12: false });
+      const fullText = `$${illusionDigit} ${timeText} God, who is that; god?   `;
+
+      ctx.font = "12px 'American Typewriter'";
+      const textWidth = ctx.measureText(fullText).width;
+
+      // TITLE view
+      let visibleWindow = fullText + fullText;
+      const pos = Math.floor(offset / 8) % fullText.length; 
+      const scrollTitle = visibleWindow.substring(pos, pos + 40);
+      document.title = scrollTitle;
+
+      if (offset > textWidth && !digitLocked) {
+        illusionDigit = Math.floor(Math.random() * 10); 
+        offset = -canvas.width;
+        digitLocked = true;
+      }
+      if (offset <= 0) digitLocked = false;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = "12px 'American Typewriter'";
+      ctx.textBaseline = "middle";
+
+      for (let i = 0; i < fullText.length; i++) {
+        const char = fullText[i];
+        const hue = (now.getTime() / 20 + i * 12) % 360;
+        ctx.fillStyle = `hsl(${hue},100%,50%)`;
+        ctx.fillText(char, offset + i * 8, canvas.height / 2);
+      }
+
+      document.getElementById("favicon").href = canvas.toDataURL("image/png");
+
+      offset += 0.5;
+      requestAnimationFrame(updateTabUI);
+    }
+    updateTabUI();
+  </script>
+
+  <style>
+    body {
+      font-family: "American Typewriter", serif;
+      text-align: center;
+      margin: 0;
+      padding: 2em;
+      background: #000;
+      color: #eee;
+    }
+    #linkDisplay {
+      font-size: 16px;
+      margin-top: 40px;
+      cursor: pointer;
+      display: inline-block;
+      padding: 10px 20px;
+      border: 1px solid #666;
+      border-radius: 8px;
+      background: #222;
+      transition: all 0.3s ease;
+    }
+    #linkDisplay:hover {
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <!-- Fake link (disclaimer style) -->
+  <div id="linkDisplay">vicmbugua.wixstudio.com/claude</div>
+
+  <script>
+    const linkDisplay = document.getElementById("linkDisplay");
+
+    const fakeLink = "https://static.wixstatic.com/media/d2a1c9_7bb3bbce8cee4050944572a6b1416317~mv2.jpg";
+    const realLink = "https://vicmbugua.wixstudio.com/claude";
+
+    linkDisplay.addEventListener("click", () => {
+      let steps = [
+        "Opening " + fakeLink + " …",
+        "Loading page …",
+        "Redirecting …",
+        "Final link: " + realLink
+      ];
+      let i = 0;
+
+      function step() {
+        if (i < steps.length) {
+          linkDisplay.textContent = steps[i];
+          i++;
+          setTimeout(step, 1000);
+        } else {
+          // Instead of embedding, either show link or auto-navigate
+          // Option A: just show it as text
+          linkDisplay.innerHTML = `<a href="${realLink}" target="_blank">${realLink}</a>`;
+          // Option B (uncomment to auto-redirect):
+          // window.location.href = realLink;
+        }
+      }
+      step();
+    });
+  </script>
+</body>
+</html>
